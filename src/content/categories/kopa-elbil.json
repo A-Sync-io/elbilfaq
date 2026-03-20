@@ -1,1 +1,5 @@
-{name:Köpa elbil,slug:kopa-elbil,description:Att köpa elbil, leasing, ägande och ekonomi}
+{
+  "name": "Köpa elbil",
+  "slug": "kopa-elbil",
+  "description": "Att köpa elbil, leasing, ägande och ekonomi"
+}

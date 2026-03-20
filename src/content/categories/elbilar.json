@@ -1,1 +1,5 @@
-{name:Elbilar,slug:elbilar,description:Tester, jämförelser och guider om elbilar}
+{
+  "name": "Elbilar",
+  "slug": "elbilar",
+  "description": "Tester, jämförelser och guider om elbilar"
+}
