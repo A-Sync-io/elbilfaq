@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-primary: var(--primary);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+}
+
+@layer base {
+  :root {
+    /* Easily change the primary color here */
+    --primary: #059669;
+    
+    --background: #ffffff;
+    --foreground: #09090b;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+    --border: #e4e4e7;
+    --card: #ffffff;
+  }
+  
+  .dark {
+    --background: #09090b;
+    --foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    --border: #27272a;
+    --card: #18181b;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased transition-colors duration-200;
+  }
+}
+
+/* ── Typography plugin: align prose colors with site theme ── */
+.prose {
+  --tw-prose-body:         var(--foreground);
+  --tw-prose-headings:     var(--foreground);
+  --tw-prose-lead:         var(--muted-foreground);
+  --tw-prose-links:        var(--primary);
+  --tw-prose-bold:         var(--foreground);
+  --tw-prose-counters:     var(--muted-foreground);
+  --tw-prose-bullets:      var(--primary);
+  --tw-prose-hr:           var(--border);
+  --tw-prose-quotes:       var(--foreground);
+  --tw-prose-quote-borders:var(--primary);
+  --tw-prose-captions:     var(--muted-foreground);
+  --tw-prose-code:         var(--foreground);
+  --tw-prose-pre-code:     #e6edf3;
+  --tw-prose-pre-bg:       #0d1117;
+  --tw-prose-th-borders:   var(--border);
+  --tw-prose-td-borders:   var(--border);
+}
+
+/* Offset anchors for sticky header */
+.prose :is(h2, h3, h4) {
+  scroll-margin-top: 6rem;
+}

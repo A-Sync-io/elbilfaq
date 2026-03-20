@@ -1,0 +1,70 @@
+[
+  {
+    "query": "bolåneräntor prognos 2026",
+    "category": "räntor",
+    "top_result": {
+      "title": "",
+      "url": "?q=bol%C3%A5ner%C3%A4ntor%20prognos%202026%20site%3Awww.ekonomifokus.se",
+      "snippet": "17 Feb 2026Prognos för bolåneräntorna 2026 & 2027 Aktuella bolåneräntor Idag ligger SBAB, Swedbank, Handelsbanken & Länsförsäkringars rörliga bolåneräntor (snitträntor) på 2,61 - 2,65 %. 2026 I december 2026 kommer bolåneräntorna att ligga mellan 2,60 - 2,80 % enligt prognoser från SBAB, Swedbank, H"
+    },
+    "article": {
+      "title": "Error",
+      "url": "?q=bol%C3%A5ner%C3%A4ntor%20prognos%202026%20site%3Awww.ekonomifokus.se",
+      "content": "Failed to load: Page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL\nCall log:\n  - navigating to \"?q=bol%C3%A5ner%C3%A4ntor%20prognos%202026%20site%3Awww.ekonomifokus.se\", waiting until \"networkidle\"\n",
+      "author": "Unknown",
+      "date": "Unknown"
+    },
+    "date": "2026-03-01"
+  },
+  {
+    "query": "bostadspriser Sverige 2026",
+    "category": "bostadsmarknaden",
+    "top_result": {
+      "title": "",
+      "url": "?q=bostadspriser%20Sverige%202026%20site%3Awww.dagensps.se",
+      "snippet": "16 Dec 2025Hemnet spår prisuppgång i 20 kommuner 2026 - här väntas bostadsrätter och villor öka mest enligt nya prognosen."
+    },
+    "article": {
+      "title": "Error",
+      "url": "?q=bostadspriser%20Sverige%202026%20site%3Awww.dagensps.se",
+      "content": "Failed to load: Page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL\nCall log:\n  - navigating to \"?q=bostadspriser%20Sverige%202026%20site%3Awww.dagensps.se\", waiting until \"networkidle\"\n",
+      "author": "Unknown",
+      "date": "Unknown"
+    },
+    "date": "2026-03-01"
+  },
+  {
+    "query": "Riksbanken räntebesked 2026",
+    "category": "räntor",
+    "top_result": {
+      "title": "",
+      "url": "?q=Riksbanken%20r%C3%A4ntebesked%202026%20site%3Awww.riksbank.se",
+      "snippet": "Riksbankens kalender med datum för sammanträden, tal och presentationer, publiceringar av rapporter, penningpolitiska beslut och räntebesked med mera."
+    },
+    "article": {
+      "title": "Error",
+      "url": "?q=Riksbanken%20r%C3%A4ntebesked%202026%20site%3Awww.riksbank.se",
+      "content": "Failed to load: Page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL\nCall log:\n  - navigating to \"?q=Riksbanken%20r%C3%A4ntebesked%202026%20site%3Awww.riksbank.se\", waiting until \"networkidle\"\n",
+      "author": "Unknown",
+      "date": "Unknown"
+    },
+    "date": "2026-03-01"
+  },
+  {
+    "query": "amorteringskrav bolån 2026",
+    "category": "amortering",
+    "top_result": {
+      "title": "",
+      "url": "?q=amorteringskrav%20bol%C3%A5n%202026%20site%3Awww.handelsbanken.se",
+      "snippet": "Regeringen går vidare med förslaget om sänkta amorteringskrav och höjt bolånetak. De nya reglerna föreslås börja gälla från 1 april 2026."
+    },
+    "article": {
+      "title": "Error",
+      "url": "?q=amorteringskrav%20bol%C3%A5n%202026%20site%3Awww.handelsbanken.se",
+      "content": "Failed to load: Page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL\nCall log:\n  - navigating to \"?q=amorteringskrav%20bol%C3%A5n%202026%20site%3Awww.handelsbanken.se\", waiting until \"networkidle\"\n",
+      "author": "Unknown",
+      "date": "Unknown"
+    },
+    "date": "2026-03-01"
+  }
+]

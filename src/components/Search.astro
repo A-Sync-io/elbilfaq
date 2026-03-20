@@ -1,0 +1,208 @@
+---
+import { getCollection } from 'astro:content';
+
+const allFAQs = await getCollection('faq', ({ data }) => !data.draft);
+const searchIndex = allFAQs.map((faq) => ({
+  id: faq.id,
+  slug: faq.slug,
+  title: faq.data.title,
+  description: faq.data.description,
+  category: faq.data.category,
+  tags: faq.data.tags
+}));
+---
+
+<div class="w-full max-w-3xl mx-auto">
+  <form role="search" class="relative" onsubmit="return false;">
+    <label for="search-input" class="sr-only">Search FAQ entries</label>
+    
+    <div class="relative">
+      <div class="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      
+      <input
+        type="search"
+        id="search-input"
+        name="q"
+        placeholder="What are you looking for?"
+        class="w-full pl-12 pr-12 py-4 text-lg bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        maxlength="100"
+      />
+      
+      <button 
+        type="button"
+        id="search-clear"
+        class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground transition-colors"
+        aria-label="Clear search"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div id="search-hint" class="mt-3 text-sm text-muted-foreground flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      Type to search among {allFAQs.length} questions
+    </div>
+  </form>
+  
+  <div id="search-results" class="mt-8 space-y-4">
+    <!-- Results will be injected here -->
+  </div>
+  
+  <div id="search-empty" class="hidden mt-12 text-center py-12">
+    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+      <svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-foreground mb-2">No results found</h3>
+    <p class="text-muted-foreground">Try different keywords or browse by category.</p>
+  </div>
+</div>
+
+<script define:vars={{ searchIndex }}>
+  function createSearchIndex(items) {
+    return items.map(item => ({
+      ...item,
+      searchText: `${item.title} ${item.description} ${item.category} ${item.tags.join(' ')}`.toLowerCase()
+    }));
+  }
+  
+  function search(query, items) {
+    if (!query.trim()) return [];
+    
+    const normalizedQuery = query.toLowerCase().trim();
+    const terms = normalizedQuery.split(/\s+/);
+    
+    return items
+      .map(item => {
+        let score = 0;
+        
+        terms.forEach(term => {
+          if (item.title.toLowerCase().includes(term)) score += 10;
+          if (item.searchText.includes(term)) score += 5;
+          if (item.searchText.includes(term.slice(0, Math.max(2, term.length - 2)))) score += 2;
+        });
+        
+        const allTermsMatch = terms.every(term => item.searchText.includes(term));
+        if (allTermsMatch) score += 5;
+        
+        return { item, score };
+      })
+      .filter(result => result.score > 0)
+      .sort((a, b) => b.score - a.score);
+  }
+  
+  const index = createSearchIndex(searchIndex);
+  const searchInput = document.getElementById('search-input');
+  const searchClear = document.getElementById('search-clear');
+  const searchResults = document.getElementById('search-results');
+  const searchEmpty = document.getElementById('search-empty');
+  const searchHint = document.getElementById('search-hint');
+  
+  function renderResults(results) {
+    if (results.length === 0) {
+      searchResults.innerHTML = '';
+      searchEmpty.classList.remove('hidden');
+      searchHint.innerHTML = `
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        No results found
+      `;
+      return;
+    }
+    
+    searchEmpty.classList.add('hidden');
+    searchHint.innerHTML = `
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      ${results.length} result${results.length === 1 ? '' : 's'} found
+    `;
+    
+    searchResults.innerHTML = results.map(({ item }) => `
+      <article class="bg-card border border-border rounded-lg p-5 hover:border-primary transition-colors">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-primary/10 text-primary">
+            ${item.category}
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">
+          <a href="/article/${item.slug}" class="text-foreground hover:text-primary transition-colors">
+            ${item.title}
+          </a>
+        </h3>
+        <p class="text-muted-foreground text-sm line-clamp-2">${item.description}</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          ${item.tags.map(tag => `
+            <span class="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
+              ${tag}
+            </span>
+          `).join('')}
+        </div>
+      </article>
+    `).join('');
+  }
+  
+  function clearSearch() {
+    searchInput.value = '';
+    searchClear.classList.add('hidden');
+    searchResults.innerHTML = '';
+    searchEmpty.classList.add('hidden');
+    searchHint.innerHTML = `
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      Type to search among ${index.length} questions
+    `;
+    searchInput.focus();
+  }
+  
+  let debounceTimer;
+  searchInput?.addEventListener('input', (e) => {
+    const query = e.target.value;
+    
+    if (query.length > 0) {
+      searchClear.classList.remove('hidden');
+    } else {
+      searchClear.classList.add('hidden');
+    }
+    
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      if (query.length < 2) {
+        searchResults.innerHTML = '';
+        searchEmpty.classList.add('hidden');
+        searchHint.innerHTML = query.length > 0 
+          ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Type at least 2 characters`
+          : `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Type to search among ${index.length} questions`;
+        return;
+      }
+      
+      const results = search(query, index);
+      renderResults(results);
+    }, 150);
+  });
+  
+  searchClear?.addEventListener('click', clearSearch);
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlQuery = urlParams.get('q');
+  if (urlQuery) {
+    searchInput.value = urlQuery;
+    searchClear.classList.remove('hidden');
+    const results = search(urlQuery, index);
+    renderResults(results);
+  }
+</script>

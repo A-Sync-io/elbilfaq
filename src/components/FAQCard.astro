@@ -1,0 +1,67 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  item: CollectionEntry<'faq'>;
+  expanded?: boolean;
+}
+
+const { item, expanded = false } = Astro.props;
+const { title, category, tags } = item.data;
+
+const href = `/article/${item.slug}`;
+---
+
+<article class="bg-card border border-border rounded-lg h-full hover:border-primary transition-colors duration-200">
+  <div class="p-6 h-full flex flex-col">
+    
+    {/* Category Tag */}
+    <div class="mb-4">
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide bg-primary/10 text-primary border border-primary/20">
+        {category}
+      </span>
+    </div>
+    
+    {/* Title */}
+    <h3 class="text-lg font-bold text-foreground mb-3 line-clamp-2">
+      <a href={href} class="hover:text-primary transition-colors">
+        {title}
+      </a>
+    </h3>
+    
+    {/* Description / Content */}
+    {expanded ? (
+      <div class="prose prose-sm max-w-none mb-4 text-muted-foreground flex-grow">
+        <slot />
+      </div>
+    ) : (
+      <p class="text-sm text-muted-foreground mb-4 line-clamp-2 flex-grow">
+        {item.data.description}
+      </p>
+    )}
+    
+    {/* Footer */}
+    <div class="flex items-center justify-between pt-4 border-t border-border mt-auto">
+      
+      {/* Tags */}
+      <div class="flex flex-wrap gap-2">
+        {tags.slice(0, 2).map((tag) => (
+          <span class="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md border border-border">
+            {tag}
+          </span>
+        ))}
+      </div>
+      
+      {/* Read More Link */}
+      <a 
+        href={href} 
+        class="text-sm font-semibold text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
+      >
+        Read
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</article>

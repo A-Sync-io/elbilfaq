@@ -1,0 +1,64 @@
+---
+import { SITE, NAV } from '../config';
+import FaqBubble from './FaqBubble.astro';
+---
+
+<footer class="bg-zinc-950 text-zinc-100 mt-16 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
+      <!-- Column 1: Brand -->
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xl font-bold tracking-tight text-white">{SITE.name}</span>
+          <FaqBubble class="h-8 w-auto [&>svg]:h-full [&>svg]:w-auto" />
+        </div>
+        <p class="text-sm text-zinc-400 leading-relaxed">{SITE.description}</p>
+      </div>
+
+      <!-- Column 2: Snabblänkar -->
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-4">Snabblänkar</h3>
+        <ul class="space-y-3">
+          {NAV.main.map((item) => (
+            <li><a href={item.href} class="text-sm text-zinc-400 hover:text-white transition-colors">{item.label}</a></li>
+          ))}
+          <li><a href="/search" class="text-sm text-zinc-400 hover:text-white transition-colors">Sök</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Kategorier -->
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-4">Kategorier</h3>
+        <ul class="space-y-3">
+          <li><a href="/categories/bolanerantor" class="text-sm text-zinc-400 hover:text-white transition-colors">Bolåneräntor</a></li>
+          <li><a href="/categories/bostadsmarknaden" class="text-sm text-zinc-400 hover:text-white transition-colors">Bostadsmarknaden</a></li>
+          <li><a href="/categories/amortering" class="text-sm text-zinc-400 hover:text-white transition-colors">Amortering</a></li>
+          <li><a href="/categories/guider" class="text-sm text-zinc-400 hover:text-white transition-colors">Guider</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Systersajter -->
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-4">Systersajter</h3>
+        <ul class="space-y-3">
+          <li><a href="https://ketofaq.se" target="_blank" rel="noopener noreferrer" class="text-sm text-zinc-400 hover:text-white transition-colors">KetoFAQ.se</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 5: Information -->
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-4">Information</h3>
+        <ul class="space-y-3">
+          <li><a href="/hjalp" class="text-sm text-zinc-400 hover:text-white transition-colors">Hjälpcenter</a></li>
+          <li><a href="/kontakt" class="text-sm text-zinc-400 hover:text-white transition-colors">Kontakta oss</a></li>
+          <li><a href="/integritetspolicy" class="text-sm text-zinc-400 hover:text-white transition-colors">Integritetspolicy</a></li>
+          <li><a href="/villkor" class="text-sm text-zinc-400 hover:text-white transition-colors">Användarvillkor</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-zinc-800 text-center text-sm text-zinc-400">
+      <p>&copy; {new Date().getFullYear()} {SITE.name}. Alla rättigheter förbehållna.</p>
+    </div>
+  </div>
+</footer>

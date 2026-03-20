@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../config';
+---
+
+<Layout
+  showSidebar={false}
+  seo={{
+    title: 'Integritetspolicy - ' + SITE.name,
+    description: 'Så hanterar ' + SITE.name + ' dina personuppgifter. Information om cookies, analys och dina rättigheter.',
+    type: 'website'
+  }}
+>
+  <section class="bg-card border-b border-border py-16 md:py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center gap-2 text-sm mb-6" aria-label="Breadcrumb">
+        <a href="/" class="text-muted-foreground hover:text-foreground transition-colors">Hem</a>
+        <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="text-primary font-semibold">Integritetspolicy</span>
+      </nav>
+
+      <div class="max-w-3xl">
+        <span class="text-sm font-bold uppercase tracking-wider text-primary mb-2 block">Juridiskt</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">Integritetspolicy</h1>
+        <p class="text-muted-foreground text-lg mt-4">Så hanterar vi dina personuppgifter och din integritet.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg dark:prose-invert max-w-none">
+      <p><em>Senast uppdaterad: 28 februari 2026</em></p>
+
+      <h2>1. Ansvarig</h2>
+      <p>{SITE.name} ({SITE.url}) är ansvarig för behandlingen av personuppgifter som beskrivs i denna policy. Har du frågor kan du kontakta oss via <a href="/kontakt">kontaktsidan</a>.</p>
+
+      <h2>2. Vilka uppgifter samlar vi in?</h2>
+      <p>{SITE.name} är en informationssajt som inte kräver registrering eller inloggning. Vi samlar in minimalt med personuppgifter:</p>
+      <ul>
+        <li><strong>Teknisk data</strong> — IP-adress, webbläsartyp, operativsystem och enhetsinformation samlas automatiskt vid besök via webbserverns loggar.</li>
+        <li><strong>Cookies</strong> — Vi använder cookies för webbplatsens grundläggande funktioner (exempelvis val av mörkt/ljust läge). Se avsnitt 4 nedan.</li>
+        <li><strong>E-post</strong> — Om du kontaktar oss via e-post sparar vi din e-postadress och meddelandet för att kunna svara dig.</li>
+      </ul>
+
+      <h2>3. Hur använder vi uppgifterna?</h2>
+      <p>Vi använder insamlade uppgifter för att:</p>
+      <ul>
+        <li>Tillhandahålla och förbättra sajten</li>
+        <li>Förstå hur besökare använder sajten (anonym statistik)</li>
+        <li>Svara på frågor och meddelanden</li>
+      </ul>
+      <p>Vi säljer, delar eller överlåter aldrig dina personuppgifter till tredje part i marknadsföringssyfte.</p>
+
+      <h2>4. Cookies</h2>
+      <p>En cookie är en liten textfil som sparas på din enhet. Vi använder:</p>
+      <ul>
+        <li><strong>Nödvändiga cookies</strong> — Krävs för sajten ska fungera korrekt (t.ex. temaval).</li>
+        <li><strong>Analyscookies</strong> — Om vi använder analysverktyg (t.ex. Google Analytics eller liknande) för att förstå besöksstatistik. Dessa cookies anonymiseras.</li>
+      </ul>
+      <p>Du kan blockera cookies i din webbläsares inställningar. Observera att sajten kanske inte fungerar optimalt utan nödvändiga cookies.</p>
+
+      <h2>5. Tredjepartstjänster</h2>
+      <p>Sajten kan använda följande tredjepartstjänster:</p>
+      <ul>
+        <li><strong>Webbhotell</strong> — För att servera sajten. Leverantören kan ha tillgång till teknisk data (IP-adress, begärandeloggar).</li>
+        <li><strong>Analysverktyg</strong> — För anonym besöksstatistik.</li>
+      </ul>
+
+      <h2>6. Dina rättigheter</h2>
+      <p>Enligt dataskyddsförordningen (GDPR) har du rätt att:</p>
+      <ul>
+        <li><strong>Begära tillgång</strong> — Se vilka uppgifter vi har om dig.</li>
+        <li><strong>Begära rättelse</strong> — Korrigera felaktiga uppgifter.</li>
+        <li><strong>Begära radering</strong> — Be oss radera dina uppgifter.</li>
+        <li><strong>Invända mot behandling</strong> — Motsätta dig viss behandling av dina uppgifter.</li>
+      </ul>
+      <p>Kontakta oss via <a href="/kontakt">kontaktsidan</a> för att utöva dina rättigheter.</p>
+
+      <h2>7. Säkerhet</h2>
+      <p>Vi vidtar rimliga tekniska och organisatoriska åtgärder för att skydda dina uppgifter. Sajten serveras via HTTPS.</p>
+
+      <h2>8. Ändringar</h2>
+      <p>Vi kan uppdatera denna policy. Väsentliga ändringar meddelas på sajten. Datum för senaste uppdatering anges överst.</p>
+    </div>
+  </section>
+</Layout>

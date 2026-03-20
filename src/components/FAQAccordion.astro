@@ -1,0 +1,100 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  faqs: Array<CollectionEntry<'faq'> & { Content?: any }>;
+}
+
+const { faqs } = Astro.props;
+
+// Generate FAQPage structured data for SEO
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.data.title,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.data.description
+    }
+  }))
+};
+---
+
+<!-- Schema.org FAQPage structured data -->
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+<!-- FAQ Accordion -->
+<div class="space-y-4" data-faq-accordion>
+  {faqs.map((faq, index) => (
+    <div class="bg-card border border-border rounded-lg overflow-hidden transition-colors hover:border-primary/50">
+      <button
+        type="button"
+        class="w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none focus:bg-muted/50 transition-colors"
+        aria-expanded="false"
+        aria-controls={`faq-answer-${index}`}
+        id={`faq-question-${index}`}
+      >
+        <div class="flex items-center gap-4 pr-4">
+          <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-primary/10 text-primary font-bold text-sm">
+            {index + 1}
+          </span>
+          <span class="text-lg font-semibold text-foreground">{faq.data.title}</span>
+        </div>
+        
+        <svg 
+          class="w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-200"
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24" 
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      
+      <div
+        id={`faq-answer-${index}`}
+        class="hidden px-6 pb-6 bg-muted/20"
+        aria-labelledby={`faq-question-${index}`}
+      >
+        <div class="pl-12 pt-4">
+          <div class="prose prose-sm md:prose-base prose-slate dark:prose-invert max-w-none text-muted-foreground">
+            {faq.Content ? <faq.Content /> : null}
+          </div>
+          
+          <div class="mt-6 flex items-center justify-between pt-4 border-t border-border">
+            <span class="text-sm text-muted-foreground">
+              Category: <span class="font-medium text-foreground">{faq.data.category}</span>
+            </span>
+            
+            <a 
+              href={`/article/${faq.slug}`}
+              class="text-sm font-semibold text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
+            >
+              View full answer
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll('[data-faq-accordion] button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const isExpanded = button.getAttribute('aria-expanded') === 'true';
+      const answer = document.getElementById(button.getAttribute('aria-controls') || '');
+      const icon = button.querySelector('svg:last-child');
+      
+      button.setAttribute('aria-expanded', (!isExpanded).toString());
+      answer?.classList.toggle('hidden');
+      icon?.classList.toggle('rotate-180');
+    });
+  });
+</script>

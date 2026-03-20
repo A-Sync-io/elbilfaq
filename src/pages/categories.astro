@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const categories = await getCollection('categories');
+const sortedKategorier = categories.sort((a, b) => a.data.order - b.data.order);
+
+const allFAQs = await getCollection('faq', ({ data }) => !data.draft);
+
+// Count FAQs per category
+const categoryCounts = sortedKategorier.map(category => ({
+  ...category,
+  count: allFAQs.filter(faq => 
+    faq.data.category.toLowerCase().replace(/\s+/g, '-') === category.data.slug
+  ).length
+}));
+---
+
+<Layout 
+  showSidebar={false}
+  seo={{
+    title: 'Kategorier - BolanFAQ',
+    description: 'Bläddra bland alla kategorier för att hitta svar efter ämne.',
+    type: 'website'
+  }}
+>
+  <!-- Page Header -->
+  <section class="bg-card border-b border-border py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center gap-2 text-sm mb-6" aria-label="Breadcrumb">
+        <a href="/" class="text-muted-foreground hover:text-foreground transition-colors">Hem</a>
+        <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="text-primary font-semibold">Kategorier</span>
+      </nav>
+      
+      <div>
+        <span class="text-sm font-bold uppercase tracking-wider text-primary mb-2 block">Bläddra efter ämne</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">Kategorier</h1>
+        <p class="text-muted-foreground text-lg mt-4">Utforska frågor efter kategori</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kategorier Grid -->
+  <section class="py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categoryCounts.map((category) => (
+          <a 
+            href={`/categories/${category.data.slug}`}
+            class="block bg-card border border-border rounded-lg p-6 group hover:border-primary transition-colors"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+              </div>
+              
+              <span class="flex-shrink-0 inline-flex items-center justify-center px-3 py-1 rounded-full bg-muted text-muted-foreground text-sm font-bold">
+                {category.count}
+              </span>
+            </div>
+            
+            <h2 class="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
+              {category.data.name}
+            </h2>
+            
+            <p class="text-muted-foreground text-sm mb-4 line-clamp-2">
+              {category.data.description}
+            </p>
+            
+            <div class="flex items-center text-sm font-semibold text-primary">
+              Bläddra bland frågor
+              <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

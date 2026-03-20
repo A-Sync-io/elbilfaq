@@ -1,0 +1,378 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import FAQCard from '../../components/FAQCard.astro';
+import { SITE } from '../../config';
+
+export async function getStaticPaths() {
+  const faqs = await getCollection('faq', ({ data }) => !data.draft);
+  return faqs.map((faq) => ({
+    params: { slug: faq.slug },
+    props: { faq },
+  }));
+}
+
+const { faq } = Astro.props;
+const { Content, headings } = await faq.render();
+
+// Reading time from word count
+const wordCount = faq.body.split(/\s+/).filter(Boolean).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+// Category display info
+const categories = await getCollection('categories');
+const categoryInfo = categories.find((c) => c.data.slug === faq.data.category);
+const categoryName = categoryInfo?.data.name || faq.data.category;
+
+// Relaterade artiklar (same category, max 3)
+const relatedFAQs = await getCollection('faq', ({ data, slug }) =>
+  !data.draft && slug !== faq.slug && data.category === faq.data.category
+).then((items) => items.slice(0, 3));
+
+// TOC from rendered headings (h2 + h3 only)
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+// Canonical URL
+const canonicalURL = faq.data.canonicalURL || `${SITE.url}/article/${faq.slug}`;
+
+// Formatted dates
+const publishedFull = faq.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+const updatedFull = faq.data.updatedDate?.toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+
+// Schema.org: Article
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: faq.data.title,
+  description: faq.data.description,
+  datePublished: faq.data.pubDate.toISOString(),
+  dateModified: (faq.data.updatedDate ?? faq.data.pubDate).toISOString(),
+  author: {
+    '@type': 'Person',
+    name: faq.data.author || SITE.author,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+  },
+  url: canonicalURL,
+  keywords: faq.data.tags.join(', '),
+  articleSection: categoryName,
+  inLanguage: SITE.language,
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['h1', '.article-lead'],
+  },
+};
+
+// Schema.org: BreadcrumbList
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: categoryName,
+      item: `${SITE.url}/categories/${faq.data.category}`,
+    },
+    { '@type': 'ListItem', position: 3, name: faq.data.title, item: canonicalURL },
+  ],
+};
+
+// Schema.org: FAQPage (optional, from frontmatter)
+const faqPageSchema = faq.data.faqSchema?.length ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.data.faqSchema.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.a,
+    },
+  })),
+} : null;
+---
+
+<Layout
+  seo={{
+    title: `${faq.data.title} — ${SITE.name}`,
+    description: faq.data.description,
+    type: 'article',
+    pubDate: faq.data.pubDate,
+    modifiedDate: faq.data.updatedDate,
+    author: faq.data.author || SITE.author,
+    tags: faq.data.tags,
+    canonicalURL: faq.data.canonicalURL,
+    ogImage: faq.data.ogImage,
+  }}
+  showSidebar={false}
+>
+  <!-- Structured data (JSON-LD valid in body per Google spec) -->
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  {faqPageSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(faqPageSchema)} />
+  )}
+
+  <!-- Reading progress bar (fixed above sticky header) -->
+  <div id="reading-progress" class="fixed top-0 left-0 h-0.5 bg-primary z-[60] w-0"></div>
+
+  <div class="max-w-5xl mx-auto">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-1.5 text-sm text-muted-foreground mb-8 flex-wrap" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-foreground transition-colors">Home</a>
+      <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+      <a href={`/categories/${faq.data.category}`} class="hover:text-foreground transition-colors">
+        {categoryName}
+      </a>
+      <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+      <span class="text-foreground truncate max-w-[200px] sm:max-w-sm">{faq.data.title}</span>
+    </nav>
+
+    <!-- Page layout: article + sticky sidebar -->
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-12 xl:gap-16">
+
+      <!-- ───────── Main content ───────── -->
+      <div class="min-w-0">
+
+        <!-- Article header -->
+        <header class="mb-10">
+          <a
+            href={`/categories/${faq.data.category}`}
+            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors mb-5"
+          >
+            {categoryName}
+          </a>
+
+          <h1 class="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-foreground tracking-tight leading-[1.1] mb-5">
+            {faq.data.title}
+          </h1>
+
+          <p class="article-lead text-lg sm:text-xl text-muted-foreground leading-relaxed mb-7 max-w-2xl">
+            {faq.data.description}
+          </p>
+
+          <!-- Meta bar -->
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground pt-5 border-t border-border">
+            {faq.data.author && (
+              <span class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                {faq.data.author}
+              </span>
+            )}
+            <time datetime={faq.data.pubDate.toISOString()} class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              {publishedFull}
+            </time>
+            {updatedFull && (
+              <span class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                </svg>
+                Uppdaterad {updatedFull}
+              </span>
+            )}
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              {readingTime} min läsning
+            </span>
+          </div>
+        </header>
+
+        <!-- Article body -->
+        <article
+          class="prose prose-lg max-w-none
+                 prose-code:before:content-none prose-code:after:content-none
+                 prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5
+                 prose-code:rounded prose-code:font-normal"
+          id="article-body"
+          itemscope
+          itemtype="https://schema.org/Article"
+        >
+          <!-- Machine-readable metadata (hidden) -->
+          <meta itemprop="headline" content={faq.data.title} />
+          <meta itemprop="description" content={faq.data.description} />
+          <meta itemprop="datePublished" content={faq.data.pubDate.toISOString()} />
+          {faq.data.updatedDate && (
+            <meta itemprop="dateModified" content={faq.data.updatedDate.toISOString()} />
+          )}
+          <meta itemprop="author" content={faq.data.author || SITE.author} />
+          <meta itemprop="keywords" content={faq.data.tags.join(', ')} />
+
+          <div itemprop="articleBody">
+            <Content />
+          </div>
+        </article>
+
+        <!-- Taggar -->
+        {faq.data.tags.length > 0 && (
+          <div class="mt-12 pt-8 border-t border-border">
+            <p class="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Ämnen</p>
+            <div class="flex flex-wrap gap-2">
+              {faq.data.tags.map((tag) => (
+                <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium bg-muted text-muted-foreground border border-border">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- ───────── Sticky sidebar ───────── -->
+      <aside class="hidden lg:block mt-0">
+        <div class="sticky top-24 flex flex-col gap-5">
+
+          <!-- Article info -->
+          <div class="rounded-xl border border-border bg-card p-5 text-sm">
+            <p class="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Artikelinfo</p>
+            <dl class="space-y-3.5">
+              {faq.data.author && (
+                <div>
+                  <dt class="text-xs text-muted-foreground mb-0.5">Författare</dt>
+                  <dd class="font-semibold text-foreground">{faq.data.author}</dd>
+                </div>
+              )}
+              <div>
+                <dt class="text-xs text-muted-foreground mb-0.5">Publicerad</dt>
+                <dd class="font-semibold text-foreground">{publishedFull}</dd>
+              </div>
+              {updatedFull && (
+                <div>
+                  <dt class="text-xs text-muted-foreground mb-0.5">Senast uppdaterad</dt>
+                  <dd class="font-semibold text-foreground">{updatedFull}</dd>
+                </div>
+              )}
+              <div>
+                <dt class="text-xs text-muted-foreground mb-0.5">Lästid</dt>
+                <dd class="font-semibold text-foreground">{readingTime} min</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-muted-foreground mb-0.5">Kategori</dt>
+                <dd>
+                  <a
+                    href={`/categories/${faq.data.category}`}
+                    class="font-semibold text-primary hover:underline"
+                  >
+                    {categoryName}
+                  </a>
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- Table of contents -->
+          {tocHeadings.length > 0 && (
+            <div class="rounded-xl border border-border bg-card p-5">
+              <p class="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">På den här sidan</p>
+              <nav aria-label="Innehållsförteckning">
+                <ul class="space-y-1 text-sm">
+                  {tocHeadings.map((h) => (
+                    <li>
+                      <a
+                        href={`#${h.slug}`}
+                        class:list={[
+                          'block py-1 leading-snug transition-colors hover:text-primary',
+                          h.depth === 3
+                            ? 'pl-3 text-muted-foreground border-l border-border'
+                            : 'text-foreground font-medium',
+                        ]}
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          )}
+
+        </div>
+      </aside>
+    </div>
+
+    <!-- Relaterade artiklar -->
+    {relatedFAQs.length > 0 && (
+      <section class="mt-16 pt-12 border-t border-border" aria-label="Relaterade artiklar">
+        <div class="mb-8">
+          <p class="text-xs font-bold uppercase tracking-widest text-primary mb-1">Läs vidare</p>
+          <h2 class="text-2xl font-bold text-foreground">Relaterade artiklar</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {relatedFAQs.map((related) => (
+            <FAQCard item={related} />
+          ))}
+        </div>
+      </section>
+    )}
+
+  </div>
+</Layout>
+
+<script>
+  // Reading progress bar
+  const bar = document.getElementById('reading-progress');
+  const body = document.getElementById('article-body');
+
+  if (bar && body) {
+    const update = () => {
+      const start = body.offsetTop;
+      const height = body.offsetHeight;
+      const scrolled = window.scrollY - start + window.innerHeight * 0.5;
+      const pct = Math.min(100, Math.max(0, (scrolled / height) * 100));
+      (bar as HTMLElement).style.width = `${pct}%`;
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+
+  // Highlight active TOC section on scroll
+  const tocLinks = document.querySelectorAll<HTMLAnchorElement>('aside nav a[href^="#"]');
+  const articleHeadings = document.querySelectorAll<HTMLElement>('article h2, article h3');
+
+  if (tocLinks.length && articleHeadings.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            tocLinks.forEach((link) => {
+              const active = link.getAttribute('href') === `#${id}`;
+              link.classList.toggle('text-primary', active);
+              link.classList.toggle('text-foreground', active && link.classList.contains('font-medium'));
+              link.classList.toggle('text-muted-foreground', !active);
+            });
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -70% 0px' }
+    );
+
+    articleHeadings.forEach((h) => observer.observe(h));
+  }
+</script>

@@ -1,0 +1,74 @@
+---
+import type { SEOProps } from '../types';
+import SEO from '../components/SEO.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, THEME } from '../config';
+import '../styles/global.css';
+import fs from 'node:fs';
+
+// Generate favicon with the configured primary color
+const faviconSvg = fs.readFileSync('public/favicon.svg', 'utf-8')
+  .replace(/#48BB78/g, THEME.primary.DEFAULT);
+const faviconDataUri = `data:image/svg+xml,${encodeURIComponent(faviconSvg)}`;
+
+interface Props {
+  seo?: Partial<SEOProps>;
+  showSidebar?: boolean;
+}
+
+const { seo = {}, showSidebar = true } = Astro.props;
+
+const defaultSEO: SEOProps = {
+  title: SITE.title,
+  description: SITE.description,
+  type: 'website'
+};
+
+const mergedSEO = { ...defaultSEO, ...seo };
+---
+
+<!DOCTYPE html>
+<html lang={SITE.language} dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <SEO {...mergedSEO} />
+    <link rel="icon" type="image/svg+xml" href={faviconDataUri} />
+    <meta name="theme-color" content={THEME.primary.DEFAULT} />
+    
+    <script is:inline src="https://analytics.vril.tech/api/script.js" data-site-id="2ecd5e91fb39" defer></script>
+
+    <!-- Dark Mode initialization to prevent FOUC -->
+    <script is:inline>
+      const getThemePreference = () => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      };
+      if (getThemePreference() === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Header />
+    
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main class:list={['min-w-0', showSidebar ? 'lg:col-span-8' : 'lg:col-span-12']}>
+        <slot />
+      </main>
+      
+      {showSidebar && (
+        <aside class="lg:col-span-4 flex flex-col gap-8">
+          <slot name="sidebar" />
+        </aside>
+      )}
+    </div>
+    
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../config';
+---
+
+<Layout
+  showSidebar={false}
+  seo={{
+    title: 'Hjälpcenter - ' + SITE.name,
+    description: 'Hitta svar på vanliga frågor om sajten, kalkylatorn och våra artiklar.',
+    type: 'website'
+  }}
+>
+  <section class="bg-card border-b border-border py-16 md:py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center gap-2 text-sm mb-6" aria-label="Breadcrumb">
+        <a href="/" class="text-muted-foreground hover:text-foreground transition-colors">Hem</a>
+        <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="text-primary font-semibold">Hjälpcenter</span>
+      </nav>
+
+      <div class="max-w-3xl">
+        <span class="text-sm font-bold uppercase tracking-wider text-primary mb-2 block">Support</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">Hjälpcenter</h1>
+        <p class="text-muted-foreground text-lg mt-4">Svar på vanliga frågor om sajten och hur du använder våra verktyg.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg dark:prose-invert max-w-none">
+      <h2>Om {SITE.name}</h2>
+      <p>{SITE.name} är en oberoende informationssajt om bolån i Sverige. Vi samlar aktuell information om bolåneräntor, amorteringskrav, bostadsmarknaden och andra ämnen som rör ditt bostadsköp — allt på ett ställe.</p>
+
+      <h2>Vanliga frågor om sajten</h2>
+
+      <h3>Är informationen på sajten rådgivning?</h3>
+      <p>Nej. Innehållet på {SITE.name} är allmän information och ska inte betraktas som finansiell rådgivning. Vi rekommenderar alltid att du kontaktar din bank eller en oberoende rådgivare innan du fattar ekonomiska beslut.</p>
+
+      <h3>Hur ofta uppdateras artiklarna?</h3>
+      <p>Vi uppdaterar våra artiklar löpande när nya uppgifter publiceras — exempelvis vid Riksbankens räntebesked, regeländringar från Finansinspektionen eller ny statistik från Svensk Mäklarstatistik. Varje artikel visar datum för senaste uppdatering.</p>
+
+      <h3>Hur fungerar bolånekalkylatorn?</h3>
+      <p>Vår <a href="/kalkylator">bolånekalkylator</a> beräknar uppskattade månadskostnader baserat på köpesumma, kontantinsats, ränta och lånetid. Den tar hänsyn till svenska amorteringskrav och ränteavdrag. Resultaten är uppskattningar — din bank gör en individuell bedömning.</p>
+
+      <h3>Varifrån kommer uppgifterna?</h3>
+      <p>Vi hämtar data från offentliga källor som Riksbanken, Finansinspektionen, Statistiska centralbyrån (SCB), Svensk Mäklarstatistik och bankernas egna webbplatser. Källor anges i respektive artikel.</p>
+
+      <h3>Kan jag föreslå ett ämne?</h3>
+      <p>Ja, gärna. Kontakta oss via <a href="/kontakt">kontaktsidan</a> med ditt förslag så tittar vi på det.</p>
+
+      <h2>Teknisk hjälp</h2>
+
+      <h3>Sajten fungerar inte som den ska</h3>
+      <p>Prova att rensa webbläsarens cache och ladda om sidan. Om problemet kvarstår, kontakta oss via <a href="/kontakt">kontaktsidan</a> och beskriv felet.</p>
+
+      <h3>Mörkt läge</h3>
+      <p>Du kan växla mellan ljust och mörkt läge med knappen i sidhuvudet (sol/måne-ikonen).</p>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import TeaserCard from '../components/TeaserCard.astro';
+import { getCollection } from 'astro:content';
+
+const allFAQs = await getCollection('faq', ({ data }) => !data.draft);
+
+// Get featured FAQ (first featured one, or first overall)
+const featuredFAQ = allFAQs.find(f => f.data.featured) || allFAQs[0];
+
+// Get remaining FAQs for the grid
+const remainingFAQs = allFAQs.filter(f => f.slug !== featuredFAQ?.slug).slice(0, 6);
+
+// Mock "most read" data (in real app, this would come from analytics)
+const mostRead = remainingFAQs.slice(0, 5).map((faq, i) => ({ ...faq, rank: i + 1 }));
+---
+
+<Layout showSidebar={true}>
+  <!-- Main Content -->
+  <div slot="default" class="flex flex-col gap-12">
+    
+    <!-- Hero Section -->
+    {featuredFAQ && <Hero faq={featuredFAQ} />}
+    
+    <!-- News Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      {remainingFAQs.map((faq) => (
+        <TeaserCard faq={faq} />
+      ))}
+    </div>
+    
+    <!-- Load More Button -->
+    <div class="flex justify-center py-8 border-t border-border">
+      <a href="/faq" class="inline-block w-full max-w-[300px] text-center px-6 py-3 text-base font-semibold rounded-md border border-border bg-background text-foreground hover:bg-muted transition-colors">
+        Visa fler
+      </a>
+    </div>
+    
+  </div>
+  
+  <!-- Sidebar -->
+  <div slot="sidebar" class="flex flex-col gap-8">
+    
+    <!-- Most Read Box -->
+    <div class="bg-card border border-border rounded-lg p-6">
+      <h3 class="text-lg font-bold text-foreground mb-4 pb-2 border-b-2 border-primary">
+        Mest lästa artiklarna
+      </h3>
+      <ol class="list-none p-0 m-0">
+        {mostRead.map((faq, idx) => (
+          <li class={`flex gap-4 py-4 ${idx !== mostRead.length - 1 ? 'border-b border-border' : ''}`}>
+            <span class="shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-white text-sm font-bold rounded-md">
+              {faq.rank}
+            </span>
+            <a href={`/article/${faq.slug}`} class="text-sm font-semibold text-foreground hover:text-primary leading-snug transition-colors">
+              {faq.data.title}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <!-- Calculator CTA -->
+    <div class="bg-card border border-border rounded-lg p-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="shrink-0 w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-lg">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="2" width="16" height="20" rx="2"/>
+            <path d="M8 6h8M8 10h2M12 10h2M16 10h0M8 14h2M12 14h2M16 14h0M8 18h2M12 18h2M16 18h0"/>
+          </svg>
+        </span>
+        <h3 class="text-lg font-bold text-foreground">Bolånekalkylator</h3>
+      </div>
+      <p class="text-sm text-muted-foreground mb-4">
+        Beräkna månadskostnad, amorteringskrav och ränteavdrag för ditt bolån.
+      </p>
+      <a href="/kalkylator" class="inline-block w-full text-center px-4 py-2.5 text-sm font-semibold rounded-md bg-primary text-white hover:opacity-90 transition-opacity">
+        Beräkna nu
+      </a>
+    </div>
+    
+  </div>
+</Layout>

@@ -1,0 +1,87 @@
+---
+import type { SEOProps } from '../types';
+import { SITE } from '../config';
+
+interface Props extends SEOProps {}
+
+const {
+  title,
+  description,
+  canonicalURL,
+  ogImage = SITE.ogImage,
+  type = 'website',
+  pubDate,
+  modifiedDate,
+  author,
+  tags = [],
+  noindex = false
+} = Astro.props;
+
+const siteURL = SITE.url;
+const fullCanonicalURL = canonicalURL || `${siteURL}${Astro.url.pathname}`;
+const fullOGImage = ogImage?.startsWith('http') ? ogImage : `${siteURL}${ogImage}`;
+---
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Canonical URL -->
+<link rel="canonical" href={fullCanonicalURL} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={fullCanonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={fullOGImage} />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:locale" content={SITE.language} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={fullCanonicalURL} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={fullOGImage} />
+
+<!-- Article specific -->
+{type === 'article' && pubDate && (
+  <>
+    <meta property="article:published_time" content={pubDate.toISOString()} />
+    {modifiedDate && <meta property="article:modified_time" content={modifiedDate.toISOString()} />}
+    {author && <meta property="article:author" content={author} />}
+    {tags.map((tag) => (
+      <meta property="article:tag" content={tag} />
+    ))}
+  </>
+)}
+
+<!-- Structured Data - Organization -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE.name,
+  url: siteURL,
+  logo: `${siteURL}/logo.svg`,
+  sameAs: [],
+  description: SITE.description
+})} />
+
+<!-- Structured Data - WebSite -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: siteURL,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${siteURL}/search?q={search_term_string}`
+    },
+    'query-input': 'required name=search_term_string'
+  }
+})} />

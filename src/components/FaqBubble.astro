@@ -1,0 +1,12 @@
+---
+import fs from 'node:fs';
+
+interface Props {
+  class?: string;
+}
+
+const props = Astro.props;
+const svgContent = fs.readFileSync('public/faq-bubble.svg', 'utf-8');
+---
+
+<span class:list={['inline-block text-primary', props.class]} set:html={svgContent} />

@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../config';
+---
+
+<Layout
+  showSidebar={false}
+  seo={{
+    title: 'Användarvillkor - ' + SITE.name,
+    description: 'Användarvillkor för ' + SITE.name + '. Regler för användning av sajten, ansvarsfriskrivning och upphovsrätt.',
+    type: 'website'
+  }}
+>
+  <section class="bg-card border-b border-border py-16 md:py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center gap-2 text-sm mb-6" aria-label="Breadcrumb">
+        <a href="/" class="text-muted-foreground hover:text-foreground transition-colors">Hem</a>
+        <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="text-primary font-semibold">Användarvillkor</span>
+      </nav>
+
+      <div class="max-w-3xl">
+        <span class="text-sm font-bold uppercase tracking-wider text-primary mb-2 block">Juridiskt</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">Användarvillkor</h1>
+        <p class="text-muted-foreground text-lg mt-4">Villkor för användning av {SITE.name}.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg dark:prose-invert max-w-none">
+      <p><em>Senast uppdaterad: 28 februari 2026</em></p>
+
+      <h2>1. Allmänt</h2>
+      <p>Genom att använda {SITE.name} ({SITE.url}) godkänner du dessa användarvillkor. Om du inte godkänner villkoren ska du inte använda sajten.</p>
+
+      <h2>2. Sajtens syfte</h2>
+      <p>{SITE.name} tillhandahåller allmän information om bolån, bostadsmarknaden och relaterade ekonomiska ämnen i Sverige. Syftet är att hjälpa besökare att bättre förstå bolånerelaterade frågor.</p>
+
+      <h2>3. Inte finansiell rådgivning</h2>
+      <p>Innehållet på sajten utgör <strong>inte</strong> finansiell, juridisk eller skattemässig rådgivning. Informationen är allmän till sin natur och tar inte hänsyn till din individuella situation. Innan du fattar ekonomiska beslut bör du:</p>
+      <ul>
+        <li>Konsultera din bank eller en oberoende finansiell rådgivare</li>
+        <li>Verifiera aktuella villkor direkt hos relevanta myndigheter och banker</li>
+        <li>Göra en egen bedömning baserad på din personliga ekonomi</li>
+      </ul>
+
+      <h2>4. Kalkylatorns begränsningar</h2>
+      <p>Vår <a href="/kalkylator">bolånekalkylator</a> ger uppskattningar baserade på de värden du anger. Resultaten är indikativa och kan avvika från bankens faktiska beräkningar. Kalkylatorn tar inte hänsyn till alla individuella faktorer som kan påverka din ränta, amortering eller lånebeslut.</p>
+
+      <h2>5. Aktualitet och korrekthet</h2>
+      <p>Vi strävar efter att hålla informationen korrekt och uppdaterad, men kan inte garantera att allt innehåll alltid är fullständigt, aktuellt eller felfritt. Räntor, regler och marknadsförhållanden ändras kontinuerligt. Kontrollera alltid aktuell information hos relevanta myndigheter och institut.</p>
+
+      <h2>6. Ansvarsfriskrivning</h2>
+      <p>{SITE.name} ansvarar inte för:</p>
+      <ul>
+        <li>Ekonomiska förluster eller skador som uppstår till följd av att du använder information från sajten</li>
+        <li>Felaktigheter eller brister i innehållet</li>
+        <li>Avbrott i sajtens tillgänglighet</li>
+        <li>Innehåll på tredjepartssajter som vi länkar till</li>
+      </ul>
+
+      <h2>7. Länkar till tredje part</h2>
+      <p>Sajten kan innehålla länkar till externa webbplatser (banker, myndigheter, nyhetsmedier). Vi ansvarar inte för innehållet på dessa sajter. Länkar innebär inte att vi rekommenderar eller garanterar innehållet på den länkade sajten.</p>
+
+      <h2>8. Upphovsrätt</h2>
+      <p>Allt innehåll på {SITE.name} — texter, bilder, grafik och kod — skyddas av upphovsrätt. Du får:</p>
+      <ul>
+        <li>Läsa och använda informationen för personligt bruk</li>
+        <li>Dela länkar till artiklar</li>
+      </ul>
+      <p>Du får <strong>inte</strong> utan skriftligt tillstånd:</p>
+      <ul>
+        <li>Kopiera eller återpublicera artiklar i sin helhet</li>
+        <li>Använda innehållet i kommersiellt syfte</li>
+        <li>Automatiserat kopiera (scrapa) sajten</li>
+      </ul>
+
+      <h2>9. Ändringar</h2>
+      <p>Vi förbehåller oss rätten att ändra dessa villkor. Fortsatt användning av sajten efter att villkoren ändrats innebär att du godkänner de nya villkoren. Datum för senaste uppdatering anges överst.</p>
+
+      <h2>10. Tillämplig lag</h2>
+      <p>Svensk lag tillämpas på dessa villkor.</p>
+    </div>
+  </section>
+</Layout>

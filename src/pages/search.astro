@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Search from '../components/Search.astro';
+import { SITE } from '../config';
+---
+
+<Layout 
+  seo={{
+    title: 'Sök - ' + SITE.name,
+    description: 'Sök bland alla vanliga frågor och svar',
+    type: 'website'
+  }}
+>
+  <!-- Page Header -->
+  <section class="bg-card border-b border-border py-16 md:py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center gap-2 text-sm mb-6" aria-label="Breadcrumb">
+        <a href="/" class="text-muted-foreground hover:text-foreground transition-colors">Hem</a>
+        <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="text-primary font-semibold">Sök</span>
+      </nav>
+      
+      <div class="max-w-3xl">
+        <span class="text-sm font-bold uppercase tracking-wider text-primary mb-2 block">Hitta svar</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">Sök</h1>
+        <p class="text-muted-foreground text-lg mt-4">Hitta svar snabbt i vår kunskapsbas</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Section -->
+  <section class="py-12 md:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Search />
+    </div>
+  </section>
+</Layout>
